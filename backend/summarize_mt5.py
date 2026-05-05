@@ -4,8 +4,12 @@ Supports separate base and finetuned model slots.
 """
 
 import os
+import logging
 import torch
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+from summarize_tfidf import tfidf_summarize
+
+logger = logging.getLogger(__name__)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, "model", "mt5-telugu-news-finetuned")
@@ -25,7 +29,7 @@ def _load_base_model():
     if _base_tokenizer is not None:
         return
     print("Loading mT5 BASE model...")
-    _base_tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL_NAME)
+    _base_tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL_NAME, use_fast=False)
     _base_model = AutoModelForSeq2SeqLM.from_pretrained(BASE_MODEL_NAME)
     _base_model.eval()
 
@@ -36,7 +40,7 @@ def _load_finetuned_model():
         return
     print(f"Loading mT5 FINETUNED model from: {FINETUNED_MODEL}")
     _finetuned_tokenizer = AutoTokenizer.from_pretrained(
-        FINETUNED_MODEL, local_files_only=FINETUNED_LOCAL_ONLY
+        FINETUNED_MODEL, local_files_only=FINETUNED_LOCAL_ONLY, use_fast=False
     )
     _finetuned_model = AutoModelForSeq2SeqLM.from_pretrained(
         FINETUNED_MODEL, local_files_only=FINETUNED_LOCAL_ONLY
@@ -68,14 +72,22 @@ def _run_summarize(tokenizer, model, text, max_length=128, min_length=30,
 
 def mT5_base_summarize(text: str) -> str:
     """Summarize using the public mT5 multilingual XLSum base model."""
-    _load_base_model()
-    return _run_summarize(_base_tokenizer, _base_model, text)
+    try:
+        _load_base_model()
+        return _run_summarize(_base_tokenizer, _base_model, text)
+    except Exception as exc:
+        logger.warning("mT5 base summarization failed; falling back to TF-IDF: %s", exc, exc_info=True)
+        return tfidf_summarize(text)
 
 
 def mT5_finetuned_summarize(text: str) -> str:
     """Summarize using finetuned mT5 (falls back to base if local model not found)."""
-    _load_finetuned_model()
-    return _run_summarize(_finetuned_tokenizer, _finetuned_model, text)
+    try:
+        _load_finetuned_model()
+        return _run_summarize(_finetuned_tokenizer, _finetuned_model, text)
+    except Exception as exc:
+        logger.warning("mT5 fine-tuned summarization failed; falling back to TF-IDF: %s", exc, exc_info=True)
+        return tfidf_summarize(text)
 
 
 # Legacy alias — kept for backwards compatibility with older pipeline versions
