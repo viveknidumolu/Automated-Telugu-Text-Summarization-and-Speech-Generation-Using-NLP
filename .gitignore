@@ -9,15 +9,18 @@ env/
 venv/
 myenv/
 .venv/
- myenv_coqui_backup/
+myenv_coqui_backup/
 
 # =========================
 # AI Models & Data (IMPORTANT)
 # =========================
 backend/model/
-backend/data/
+backend/data/*
+!backend/data/.gitkeep
 *.bin
 *.pt
+*.pth
+*.ckpt
 *.safetensors
 
 # =========================

@@ -1,0 +1,79 @@
+# Git metadata
+.git/
+.gitignore
+.gitattributes
+.github/
+
+# Environment files
+.env
+.env.*
+!.env.example
+!backend/.env.example
+!frontend/.env.example
+
+# Python virtual environments
+myenv/
+venv/
+env/
+.venv/
+ENV/
+myenv_coqui_backup/
+
+# Python caches and build artifacts
+**/__pycache__/
+**/*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage/
+htmlcov/
+build/
+dist/
+*.egg-info/
+pip-wheel-metadata/
+
+# Node dependencies and build outputs
+**/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/.vite-temp/
+.npm/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Backend generated/runtime artifacts
+backend/model/
+backend/data/*
+!backend/data/.gitkeep
+*.safetensors
+*.pt
+*.pth
+*.ckpt
+*.bin
+*.mp3
+*.wav
+
+# Logs and temporary files
+*.log
+logs/
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Local OS and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Documentation and non-runtime media
+screenshots/
+/assets/
+*.md
