@@ -2,7 +2,8 @@
  * API Service for Telugu News Summarization
  */
 
-const API_BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:8000").replace(/\/$/, "");
+const DEFAULT_API_BASE_URL = "https://automated-telugu-text-summarization-and-s2gz.onrender.com";
+const API_BASE_URL = (import.meta.env.VITE_API_URL || DEFAULT_API_BASE_URL).replace(/\/+$/, "");
 
 class APIError extends Error {
   constructor(message, status) {
